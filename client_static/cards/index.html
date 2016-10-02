@@ -20,7 +20,57 @@
 
 <body>
 
-<div id = "browser" >
+<div id = "browser" > </div>
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal">
+
+    <div class="modal-content">
+
+        <div class = "row">
+            <h4>Create a new...</h4>
+        </div>
+
+        <div class="">
+
+
+            <div class = "row">
+                <div class="col s1"> </div>
+                <div class="input-field col s8">
+                    <input id="password1" type="password" class="validate" disabled="disabled">
+                    <label for="password1">Password</label>
+                </div>
+                <p class = "col s2"">
+                <input type="checkbox" id="p1c" />
+                <label for="p1c">require</label>
+                </p>
+            </div>
+
+
+            <div class = "row">
+                <div class="col s1"> </div>
+                <div class="input-field col s8">
+                    <input id="password2" type="password" class="validate" disabled="disabled">
+                    <label for="password2">Password</label>
+                </div>
+
+                <p class = "col s2"">
+                <input type="checkbox" id="p2c" />
+                <label for="p2c">require</label>
+                </p>
+            </div>
+
+
+        </div>
+
+        <div class = "row">
+            <a class="col s1"></a>
+            <a id = "new_file_button"   class="col s4  waves-effect waves-light btn-large">File</a>
+            <a class="col s1"></a>
+            <a id = "new_folder_button" class="col s4 waves-effect waves-light btn-large">Folder</a>
+        </div>
+
+    </div>
 
 </div>
 
@@ -57,7 +107,7 @@
 
         if (path.length != 0) {
             folder.data.unshift( "back_button" );
-        }
+        } folder.data.push( "new_button" );
 
         var row = 0;
         $.each( folder.data, function (key, data) {
@@ -68,10 +118,11 @@
 
             if (data == "back_button") {
                 $('#row' + row.toString() ).append( backCard( ) );
+            } else if (data == "new_button") {
+                $('#row' + row.toString() ).append( newCard( ) );
             } else {
-                $('#row' + row.toString() ).append( jsonCard(data) );
+                $('#row' + row.toString()).append( jsonCard(data) );
             }
-
         });
     }
 
@@ -91,6 +142,10 @@
                 open(data, path, {"data":"back_button"});
             });
 
+            $(".new_card .activator").click( function() {
+                $('#modal1').openModal();
+            });
+
         });
     }
 
@@ -105,11 +160,15 @@
         }
 
         if (file.data == "back_button") {
-          path.pop();            $('#browser').html("");
-
-            drawCardsFromJSON( "database.json", path );
+          path.pop();
+          $('#browser').html("");
+          drawCardsFromJSON( "database.json", path );
+          return;
+        } else if (file.data == "new_button") {
+            alert( " Make a new File" );
             return;
         }
+
         file = getByValue(folder.data, "name", file);
 
         if (file.type == "file" ) {

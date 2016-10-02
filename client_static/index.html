@@ -50,18 +50,22 @@
         if (path.length != 0) {
             db.data.unshift( "back_button" );
         }
+        db.push( "new_button");
 
         var row = 0;
         $.each( db.data, function (key, data) {
+
             if (key % 5 == 0) {
                 row += 1;
                 $('#browser').append( '<div class="row" id="row'+row.toString()+'">  </div>' );
             }
 
-            if (data == "backbutton") {
+            if (data == "back_button") {
                 $('#row' + row.toString() ).append( backCard( ) );
-            } else {
-                $('#row' + row.toString() ).append( jsonCard(data) );
+            } else if (data == "backbutton") {
+                $('#row' + row.toString() ).append( backCard( ) );
+            }else {
+                    $('#row' + row.toString() ).append( jsonCard(data) );
             }
 
         });

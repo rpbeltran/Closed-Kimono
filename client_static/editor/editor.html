@@ -13,7 +13,7 @@
 
     <link href="editor_styles.css" rel="stylesheet">
 
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
 
@@ -41,19 +41,20 @@
 
     <div>
         <div style = "width:15%; float: left;">
-            <div style = "width:100%"> Pages </div>
 
-            <div id = "pages" style = "width:100%">
+            <div id = "pages" style = "width:90%">
+
+                <ul id = "pages_list" class="collection with-header">
+                    <li class="collection-header"><h4>Pages</h4></li>
+                </ul>
 
             </div>
 
         </div>
         <div style = "float:right; width:85%;">
-            <div id = "editor"> </div>
+            <div style = "min-height:400px" id = "editor"> </div>
         </div>
     </div>
-
-
 
 </div>
 
@@ -81,23 +82,56 @@
 
 <script type="text/javascript">
 
-    path = [     ]
+    path = [      ]
     data = {
         "name": "File Name",
         "data": [
-            {"name": "page1", "data": "content1 content1 content1 content1"},
-            {"name": "page2", "data": "content2 content2 content2 content2"},
-            {"name": "page3", "data": "content3 content3 content3 content3"}
+            {"name": "page1", "data": 'hello' },
+            {"name": "page2", "data": 'hey' },
+            {"name": "page3", "data": 'hi' }
         ]
     }
+    currentPage = 0;
 
 </script>
 
 <script type="text/javascript">
 
-    function openPage( ) {
+    function displayPages( ) {
+
+        $.each( data.data, function ( key, data ) {
+
+            $("#pages_list").append('<li class="collection-item page_button" data="'+key+'">'+data.name+'</li>');
+
+        } );
+
+        $(".page_button").click( function() {
+            updatePage( currentPage );
+            openPage( $(this).attr("data") );
+        } );
 
     }
+
+    function getPageContentString( ) {
+        return quill.getText();
+    }
+
+    function openPage( index ) {
+        currentPage = index;
+        quill.setText( data.data[index].data );
+    }
+
+    function updatePage( index ) {
+        data.data[index].data = getPageContentString();
+    }
+
+    function sync( ) {
+
+    }
+
+    $("#file_name").val(data.name);
+    displayPages();
+    openPage(currentPage);
 
 </script>
 
