@@ -29,7 +29,7 @@ function buildCardReveal ( message, passwords ) {
 
 function buildCard ( card_class, card_name, image_url, link_description, reveal_text, passwords ) {
     return  '<div class="col s2">' +
-            '   <div class="card' + card_class + '">' +
+            '   <div class="card ' + card_class + '">' +
             '       <div class="card-image waves-effect waves-block waves-light activator">' +
             '           <img class="activator" style = "padding:15%;" src="' + image_url +'">' +
             '       </div>' +

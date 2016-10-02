@@ -1,12 +1,11 @@
 from tornado import web, ioloop
 from pymongo import MongoClient
 import json
-import hashlib
 import requests
 from uuid import uuid1
 from Crypto.Cipher import AES
 import base64
-
+from passlib.hash import sha256_crypt
 
 
 conf = json.loads(open("conf.json").read())
@@ -15,22 +14,22 @@ uri = "mongodb://"+conf['db_user']+":"+conf['db_pass']+"@"+conf['db_host']
 client = MongoClient(uri)
 db = client.get_default_database()[conf['db_name']]
 
-class LameCrypto(): #ToDo: this only works if the sting is
-    def __init__(self, string, password):
-        self.string = string
-        self.password = hashPW(password)
-
-    def encrypt(self):
-        cipher = AES.new(self.password, AES.MODE_ECB) #Todo: ECB is apparently awful
-        encoded = str(base64.b64encode(cipher.encrypt(self.string)))
-
-        return encoded
-
-    def decrypt(self):
-        cipher = AES.new(self.password, AES.MODE_ECB)
-        decoded = cipher.decrypt(base64.b64decode(self.string))
-
-        return decoded.strip
+# class LameCrypto(): #ToDo: this only works if the sting is 16x chars
+#     def __init__(self, string, password):
+#         self.string = string
+#         self.password = hashPW(password)
+#
+#     def encrypt(self):
+#         cipher = AES.new(self.password, AES.MODE_ECB) #Todo: ECB is apparently awful
+#         encoded = str(base64.b64encode(cipher.encrypt(self.string)))
+#
+#         return encoded
+#
+#     def decrypt(self):
+#         cipher = AES.new(self.password, AES.MODE_ECB)
+#         decoded = cipher.decrypt(base64.b64decode(self.string))
+#
+#         return decoded.strip
 
 
 class Security():
@@ -43,6 +42,8 @@ class Security():
 
     def getSecTypes(self):
         res=self.getSec()
+        if res == None:
+            return None
         return {"passwords": len(res['passwords'])} #Update as more sec types are implemented
 
     def updateSec(self, secObj):
@@ -51,15 +52,20 @@ class Security():
     def evalSec(self, secObj):
         res = self.getSec()
 
-        for i in range(len(secObj['passwords'])):
-            if secObj['passwords'][i] != hashPW(res['passwords'][i]):
+
+        for i in range(len(res['passwords'])): #ToDo: fix shit with passwords not being hashed
+            print(secObj['passwords'][i], res['passwords'][i])
+
+            if hashPW(secObj['passwords'][i]) != hashPW(res['passwords'][i]):
                 return False
 
         return True
 
 
 
-def hashPW(pw): #Todo: @Tristan
+
+def hashPW(pw):
+    #return sha256_crypt.encrypt(pw)
     return hash(pw)
 
 class IndexHandler(web.RequestHandler):
@@ -69,12 +75,25 @@ class IndexHandler(web.RequestHandler):
 
 class LoginHandler(web.RequestHandler):
     def post(self, *args, **kwargs):
+        self.set_header("Content-Type", "application/json")
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Max-Age", "3628800")
+        self.set_header( "Access-Control-Allow-Methods", "GET")
+
+
         self.username = self.get_argument("username", None)
-        security = self.get_argument("sec", None)
+        print(self.username)
+        security = json.loads(self.get_argument("sec", None))
+
+        print(security)
 
         sec = Security(self.username)
         if(sec.evalSec(security)):
-            self.setLogin()
+            s = self.setLogin()
+            self.write(json.dumps({"accepted":True, "key":s}))
+            return
+
+        self.write(json.dumps({"accepted":False}))
 
 
 
@@ -85,37 +104,43 @@ class LoginHandler(web.RequestHandler):
 
         db.users.update({"sid":self.username}, {"$set": user}, upsert=False)
 
-
-
+        return sess
 
 
 
 class APIHandler(web.RequestHandler):
     def post(self, *args, **kwargs):
-        e = self.get_argument("endpoint")
 
         self.set_header("Content-Type", "application/json")
+        self.set_header("Access-Control-Allow-Origin", "*" )
+        self.set_header("Access-Control-Max-Age", "3628800")
+        self.set_header("Access-Control-Allow-Methods", "GET" )
+
+        e = self.get_argument("endpoint")
 
         if(e == "getsec"):
             sid = self.get_argument("sid")
 
-            sec = Security(sid).getSec()
+            sec = Security(sid).getSecTypes()
+            if sec == None:
+                self.write(json.dumps({"accepted":False}))
+                return
 
-            del sec["_id"] #mongo object
+            sec['accepted'] = True
             self.write(json.dumps(sec))
             return
 
 
         elif(e == "createaccount"):
             username = self.get_argument("username", None)
-            password = hashPW(self.get_argument("password", None))
+            sec = json.loads(self.get_argument("sec", None))
 
             #ToDo: Check if username is already in db
 
             sess=str(uuid1())
 
-            db.users.insert({"sid":username, "password":password, "notes":[], "sessions":[sess]})
-            db.sec.insert({"sid":username, "passwords":[password]})
+            db.users.insert({"sid":username, "passwords":sec['passwords'], "notes":[], "sessions":[sess]})
+            db.sec.insert({"sid":username, "passwords":sec['passwords']})
 
             print("Added")
 
@@ -129,6 +154,7 @@ class APIHandler(web.RequestHandler):
 
 
 if __name__ == "__main__":
+
     app = web.Application([
         (r"/", IndexHandler),
         (r"/auth", LoginHandler),
