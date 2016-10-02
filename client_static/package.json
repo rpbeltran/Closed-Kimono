@@ -1,0 +1,21 @@
+{
+
+  "name": "closed-kimono",
+
+  "version": "0.1.0",
+
+  "description": "Secure notes in the cloud",
+  "main": "main.js",
+
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  "keywords": [
+    "security"
+  ],
+
+  "author": "",
+  "license": "ISC"
+
+}

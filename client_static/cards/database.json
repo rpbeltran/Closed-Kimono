@@ -1,0 +1,65 @@
+{
+  "name" : "root",
+  "security" : {
+    "passwords" : 1,
+    "timeout" : 900
+  },
+  "data" : [
+    {
+      "name" : "folder dan",
+      "security" : { },
+      "data" : [
+        {
+          "name" : "nest file a",
+          "security" : { },
+          "data" : "aaaaabbjkaaaaa"
+        },
+        {
+          "name" : "nest file b",
+          "security" : { },
+          "data" : "bbbbbbsdfjksdhfbbbbbbbbjhjkhbbbbbbbb"
+        }
+      ]
+    },
+    {
+      "name" : "file a",
+      "security" : { },
+      "data" : "aaaaabbjkaaaaa"
+    },
+    {
+      "name" : "file b",
+      "security" : { },
+      "data" : "bbbbbbsdfjksdhfbbbbbbbbjhjkhbbbbbbbb"
+    },
+    {
+      "name" : "file c",
+      "security" : { },
+      "data" : "ccccxcccccjhjkhcccccccccc"
+    },
+    {
+      "name" : "file d",
+      "security" : { },
+      "data" : "ddddjjhjkddddddjjddddd"
+    },
+    {
+      "name" : "file a",
+      "security" : { },
+      "data" : "aaaaabbjkaaaaa"
+    },
+    {
+      "name" : "file b",
+      "security" : { },
+      "data" : "bbbbbbsdfjksdhfbbbbbbbbjhjkhbbbbbbbb"
+    },
+    {
+      "name" : "file c",
+      "security" : { },
+      "data" : "ccccxcccccjhjkhcccccccccc"
+    },
+    {
+      "name" : "file d",
+      "security" : { },
+      "data" : "ddddjjhjkddddddjjddddd"
+    }
+  ]
+}

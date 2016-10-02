@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset = "UTF-8">
+    <title>Closed Kimono</title>
+    <link rel = "stylesheet" href = "editor_styles.css" >
+
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link href="editor_styles.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+</head>
+
+
+<body>
+
+
+<!-- Include stylesheet -->
+<link href="https://cdn.quilljs.com/1.0.6/quill.snow.css" rel="stylesheet">
+
+<!-- Create the editor container -->
+<div id = "main" style = "width: 90%; margin: 0px auto">
+
+    <div class = "input-field" style = "text-align: center; width: 50%; margin: 0px auto ; padding: 20px 0px;">
+        <input id  = "file_name" type = "text" class = "validate" style = "text-align: center;">
+    </div>
+
+    <div>
+        <div style = "width:15%; float: left;">
+            <div style = "width:100%"> Pages </div>
+
+            <div id = "pages" style = "width:100%">
+
+            </div>
+
+        </div>
+        <div style = "float:right; width:85%;">
+            <div id = "editor"> </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+<!-- Include the Quill library -->
+<script src="https://cdn.quilljs.com/1.0.6/quill.js"></script>
+
+<!-- Initialize Quill editor -->
+<script type="text/javascript">
+
+    var quill = new Quill('#editor', {
+        theme: 'snow',
+        placeholder: 'Your on a secure line..'
+    });
+
+</script>
+
+<script type="text/javascript">
+
+</script>
+
+<script type="text/javascript">
+
+</script>
+
+<script type="text/javascript">
+
+    path = [     ]
+    data = {
+        "name": "File Name",
+        "data": [
+            {"name": "page1", "data": "content1 content1 content1 content1"},
+            {"name": "page2", "data": "content2 content2 content2 content2"},
+            {"name": "page3", "data": "content3 content3 content3 content3"}
+        ]
+    }
+
+</script>
+
+<script type="text/javascript">
+
+    $("#file_name").val(data.name);
+
+</script>
+
+</body>
+
+
+</html>

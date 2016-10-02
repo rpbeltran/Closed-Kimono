@@ -1,0 +1,99 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link href="styles.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="../node_modules/font-awesome/css/font-awesome.min.css">
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+
+    <script src="card.js"> </script>
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+</head>
+
+<body>
+<div id="area">
+</div>
+<!--Import jQuery before materialize.js-->
+
+<script type="text/javascript">
+
+    db = {
+        "name" : "root",
+        "security" : {
+            "passwords" : 1,
+            "timeout" : 900
+        },
+        "data" : [
+            {
+                "name" : "folder dan",
+                "security" : { },
+                "data" : [
+                    {
+                        "name" : "nest file a",
+                        "security" : { },
+                        "data" : "aaaaabbjkaaaaa"
+                    },
+                    {
+                        "name" : "nest file b",
+                        "security" : { },
+                        "data" : "bbbbbbsdfjksdhfbbbbbbbbjhjkhbbbbbbbb"
+                    }
+                ]
+            },
+            {
+                "name" : "file a",
+                "security" : { },
+                "data" : "aaaaabbjkaaaaa"
+            },
+            {
+                "name" : "file b",
+                "security" : { },
+                "data" : "bbbbbbsdfjksdhfbbbbbbbbjhjkhbbbbbbbb"
+            },
+            {
+                "name" : "file c",
+                "security" : { },
+                "data" : "ccccxcccccjhjkhcccccccccc"
+            },
+            {
+                "name" : "file d",
+                "security" : { },
+                "data" : "ddddjjhjkddddddjjddddd"
+            }
+        ]
+    }
+
+    path = [ ];
+    folder = db ;
+
+    for ( var i = 0, l = path.length; i < l; i++ ) {
+        folder = folder[ path[i] ];
+    }
+
+    $.each( db.data, function (key, data) {
+        //Loop to write all card element with json. (i is index for card in json.)
+        console.log(data);
+        $('#area').append( jsonCard(data) );
+
+    });
+
+</script>
+
+
+</body>
+
+</html>
