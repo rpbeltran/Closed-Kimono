@@ -35,7 +35,7 @@ static void generateIv(void *buf) {
 /**
  * secrete OpenSSL errors
  */
-void secreteLibSSLError(void) {
+static void secreteLibSSLError(void) {
 	ERR_print_errors_fp(stderr);
 	abort();
 }
@@ -148,18 +148,25 @@ EXPORT void cryptoshit_encrypt(void *key, void *in, size_t inSz, void *out, size
 
 	// genearte iv
 	void *iv = out;
-	void *cryptoText = ((uint8_t *) out) + IV_LENGTH;
+	uint64_t *plainSzPtr = (uint64_t *) (((uint8_t *) iv) + IV_LENGTH);
+	uint64_t *cryptoSzPtr = (uint64_t *) (((uint8_t *) plainSzPtr) + 8);
+	void *cryptoText = ((uint8_t *) cryptoSzPtr) + 8;
+
+	*plainSzPtr = (uint64_t) inSz;
 
 	generateIv(iv);
 
 	// encrypt lol
-	encrypt(in, inSz, key, iv, cryptoText);
+	int bytesEncrypted = encrypt(in, inSz, key, iv, cryptoText);
+
+	// get the crypto size
+	*cryptoSzPtr = (uint64_t) bytesEncrypted;
 }
 
 /**
  * this does literally the exact same as the above one but in reverse lol
  */
-EXPORT void cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size_t outSz) {
+EXPORT void cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size_t outSz, size_t *actualDecryptedBytes) {
 	// check the shit
 	if(outSz > inSz) {
 		printf("no the output buffer is larger !!!\n");
@@ -168,8 +175,14 @@ EXPORT void cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size
 
 	// get the shit
 	void *iv = in;
-	void *cryptoText = ((uint8_t *) in) + IV_LENGTH;
+	uint64_t *plainSzPtr = (uint64_t *) (((uint8_t *) iv) + IV_LENGTH);
+	uint64_t *cryptoSzPtr = (uint64_t *) (((uint8_t *) plainSzPtr) + 8);
+	void *cryptoText = ((uint8_t *) cryptoSzPtr) + 8;
+
+	// get how many bytes we actually need to decrypt
+	size_t bytesOfCryptoText = *cryptoSzPtr;
+	*actualDecryptedBytes = *plainSzPtr;
 
 	// do a decryptification
-	decrypt(cryptoText, inSz, key, iv, out);
+	decrypt(cryptoText, bytesOfCryptoText, key, iv, out);
 }

@@ -3,3 +3,4 @@ node_modules/
 
 # hoes
 crypto/*.dylib
+crypto/cryptoshit-test

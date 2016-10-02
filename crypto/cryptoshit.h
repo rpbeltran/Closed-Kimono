@@ -26,6 +26,6 @@ void cryptoshit_encrypt(void *key, void *in, size_t inSz, void *out, size_t outS
 /**
  * this does literally the exact same as the above one but in reverse lol
  */
-void cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size_t outSz);
+void cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size_t outSz, size_t *actualDecryptedBytes);
 
 #endif
