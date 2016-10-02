@@ -12,7 +12,7 @@ $("#register_now").on('click', function(){
 });*/
 
 function redirect(){
-    document.location = "/cards/index.html";
+    document.location = "client_static/cards/index.html";
     
 }
 
@@ -51,11 +51,9 @@ function loadEmailStage() {
         '<div class="row">' +
         '</div>' +
         '<div class="row">' +
-        '    <div class="input-field col s4 " style = "font-size:75%;">' +
-        '       <a href="#", id="register" , class="btn waves-effect waves-light col s12">Register</a>' +
-        '    </div>' +
-        '    <div class="input-field col s7">' +
-        '        <a href="#" , id="login" , class="btn waves-effect waves-light col s12">Login</a>' +
+        '   '+
+        '    <div class="input-field col s12">' +
+        '        <a href="#" , id="login" , class="btn waves-effect waves-light col s12">Login / Register</a>' +
         '     </div>' +
         '</div>'
     );

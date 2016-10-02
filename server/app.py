@@ -18,6 +18,9 @@ db = client.get_default_database()[conf['db_name']]
 
 class LameCrypto():
     def __init__(self, string, password):
+        print("pwd", password)
+        print("str", string)
+
         self.string = string
         self.password = password
 
@@ -69,10 +72,11 @@ class Security():
         res = self.getSec()
 
 
-        for i in range(len(res['passwords'])): #ToDo: fix shit with passwords not being hashed
-            print(secObj['passwords'][i], res['passwords'][i])
 
-            if hashPW(secObj['passwords'][i]) != hashPW(res['passwords'][i]):
+        for i in range(len(res['passwords'])): #ToDo: fix shit with passwords not being hashed
+            print(hashPW(secObj['passwords'][i]), res['passwords'][i])
+
+            if hashPW(secObj['passwords'][i]) != res['passwords'][i]:
                 return False
 
         return True
@@ -88,7 +92,7 @@ def checkLogin(key):
 
 
 def hashPW(pw):
-    #return sha256_crypt.encrypt(pw)
+    #return str(sha256_crypt.encrypt(pw))
     return hash(pw)
 
 class IndexHandler(web.RequestHandler):
@@ -133,6 +137,7 @@ class LoginHandler(web.RequestHandler):
 
 class APIHandler(web.RequestHandler):
     def post(self, *args, **kwargs):
+        print("api")
 
         self.set_header("Content-Type", "application/json")
         self.set_header("Access-Control-Allow-Origin", "*" )
@@ -157,6 +162,11 @@ class APIHandler(web.RequestHandler):
         elif(e == "createaccount"):
             username = self.get_argument("username", None)
             sec = json.loads(self.get_argument("sec", None))
+
+
+
+            for s in range(len(sec['passwords'])):
+                sec['passwords'][s] = hashPW(sec['passwords'][s])
 
             #ToDo: Check if username is already in db
 
@@ -185,12 +195,19 @@ class APIHandler(web.RequestHandler):
 
 
 
+
             title  = self.get_argument("title", None)
             sec = json.loads(self.get_argument("sec", None))
-            sid = uuid1()
+            sid = str(uuid1())
+
+            for s in range(len(sec['passwords'])):
+                sec['passwords'][s] = hashPW(sec['passwords'][s])
+
+            body = "hello world"
+            pwd = "".join(sec['passwords'])
+            body = LameCrypto(body, pwd).encrypt()
 
             sec['sid'] = sid
-            body = []
 
             uinfo['notes'].append({
                 "title":title,
@@ -201,6 +218,10 @@ class APIHandler(web.RequestHandler):
 
             db.sec.insert(sec)
             db.users.update({"sid":uinfo['sid']}, {"$set": uinfo}, upsert=False)
+
+            print("success")
+
+
 
         elif(e=="syncfile"):
 
@@ -235,7 +256,9 @@ class APIHandler(web.RequestHandler):
 
             db.users.update({"sid":uinfo['sid']}, {"$set": uinfo}, upsert=False)
 
-        elif e == "getDecryped":
+        elif e == "getDecrypted":
+            print("decrypt")
+
             key  = self.get_argument("key", None)
 
             uinfo = checkLogin(key)
@@ -244,26 +267,30 @@ class APIHandler(web.RequestHandler):
                 self.write(json.dumps({"error":"not logged in"}))
                 return
 
-            print(uinfo)
+            #print(uinfo)
 
             sid  = self.get_argument("sid", None)
             s = Security(sid)
             sec = json.loads(self.get_argument("sec", None))
             pw = "".join(sec['passwords'])
 
+            print(sec, pw)
+
             for n in uinfo['notes']: #kill me
                 if(n['sid'] == sid):
                     if(s.evalSec(sec)):
+
                         crypt = LameCrypto(n['body'], pw).decrypt()
 
-                        n['body'] = crypt
+                        self.write(json.dumps({"text":str(crypt)}))
 
-                        break
+                        return
                     else:
                         print("Wrong pw??")
+                        self.write(json.dumps({"error":"wrong pw"}))
                         break
 
-            db.users.update({"sid":uinfo['sid']}, {"$set": uinfo}, upsert=False)
+            #db.users.update({"sid":uinfo['sid']}, {"$set": uinfo}, upsert=False)
 
         elif e == "listfiles":
             key  = self.get_argument("key", None)
@@ -277,7 +304,7 @@ class APIHandler(web.RequestHandler):
             d = []
             for f in uinfo['notes']:
                 s = Security(f['sid']).getSecTypes()
-                d.append({"title":f['title'], "sid":f['sid'], "s":s})
+                d.append({"name":f['title'], "sid":str(f['sid']), "security":s, "type":"file", "data":""}) #s = {'passwords':3}
 
             self.write(json.dumps(d))
 
