@@ -80,7 +80,7 @@ class Security():
 def checkLogin(key):
     if(key == None):
         return False
-    res = db.users.find_one({"sessions":{"$elemMatch":key}})
+    res = db.users.find_one({"sessions":{"$elemMatch":{"t":key}}})
     if(res == None):
         return False
 
@@ -123,7 +123,7 @@ class LoginHandler(web.RequestHandler):
     def setLogin(self):
         sess=str(uuid1())
         user = db.users.find_one({"sid":self.username})
-        user['sessions'].append(sess)
+        user['sessions'].append({"t":sess})
 
         db.users.update({"sid":self.username}, {"$set": user}, upsert=False)
 
@@ -160,9 +160,10 @@ class APIHandler(web.RequestHandler):
 
             #ToDo: Check if username is already in db
 
+
             sess=str(uuid1())
 
-            db.users.insert({"sid":username, "passwords":sec['passwords'], "notes":[], "sessions":[sess]})
+            db.users.insert({"sid":username, "passwords":sec['passwords'], "notes":[], "sessions":[{"t":sess}]})
             db.sec.insert({"sid":username, "passwords":sec['passwords']})
 
             print("Added")
@@ -183,6 +184,7 @@ class APIHandler(web.RequestHandler):
                 return
 
 
+
             title  = self.get_argument("title", None)
             sec = json.loads(self.get_argument("sec", None))
             sid = uuid1()
@@ -198,10 +200,86 @@ class APIHandler(web.RequestHandler):
             })
 
             db.sec.insert(sec)
+            db.users.update({"sid":uinfo['sid']}, {"$set": uinfo}, upsert=False)
 
         elif(e=="syncfile"):
-            pass
 
+            key  = self.get_argument("key", None)
+
+            uinfo = checkLogin(key)
+
+            if uinfo == False:
+                self.write(json.dumps({"error":"not logged in"}))
+                return
+
+            print(uinfo)
+
+            sid  = self.get_argument("sid", None)
+            body  = self.get_argument("body", None)
+            sec = json.loads(self.get_argument("sec", None))
+            s = Security(sid)
+
+            pw = "".join(sec['passwords'])
+
+            for n in uinfo['notes']:
+                if(n['sid'] == sid):
+                    if(s.evalSec(sec)):
+                        crypt = LameCrypto(body, pw).encrypt()
+
+                        n['body'] = crypt
+
+                        break
+                    else:
+                        print("Wrong pw??")
+                        break
+
+            db.users.update({"sid":uinfo['sid']}, {"$set": uinfo}, upsert=False)
+
+        elif e == "getDecryped":
+            key  = self.get_argument("key", None)
+
+            uinfo = checkLogin(key)
+
+            if uinfo == False:
+                self.write(json.dumps({"error":"not logged in"}))
+                return
+
+            print(uinfo)
+
+            sid  = self.get_argument("sid", None)
+            s = Security(sid)
+            sec = json.loads(self.get_argument("sec", None))
+            pw = "".join(sec['passwords'])
+
+            for n in uinfo['notes']: #kill me
+                if(n['sid'] == sid):
+                    if(s.evalSec(sec)):
+                        crypt = LameCrypto(n['body'], pw).decrypt()
+
+                        n['body'] = crypt
+
+                        break
+                    else:
+                        print("Wrong pw??")
+                        break
+
+            db.users.update({"sid":uinfo['sid']}, {"$set": uinfo}, upsert=False)
+
+        elif e == "listfiles":
+            key  = self.get_argument("key", None)
+
+            uinfo = checkLogin(key)
+
+            if uinfo == False:
+                self.write(json.dumps({"error":"not logged in"}))
+                return
+
+            d = []
+            for f in uinfo['notes']:
+                s = Security(f['sid']).getSecTypes()
+                d.append({"title":f['title'], "sid":f['sid'], "s":s})
+
+            self.write(json.dumps(d))
 
 
 

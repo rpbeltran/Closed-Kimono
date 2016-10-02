@@ -189,9 +189,7 @@ function loadPasswordStage(passwords, email) {
                 
             } else {
                 alert("wrong pass");    
-            }
-            
-            
+            }     
             
         }})
         

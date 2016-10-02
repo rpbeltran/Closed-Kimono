@@ -1,7 +1,7 @@
 {
   "db_user":"oversec_admin",
   "db_pass":"nimda_cesrevo",
-  "db_name":"dev1",
+  "db_name":"dev2",
   "db_host":"ds041939.mlab.com:41939/oversec"
 
 
