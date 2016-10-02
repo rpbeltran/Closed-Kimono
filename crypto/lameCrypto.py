@@ -1,15 +1,24 @@
 from ctypes import *
+from Crypto import Random
+from Crypto.Cipher import AES
+import base64
 
 class LameCrypto():
 	def __init__(self, string, password):
 		self.string = string
-		self.password = hashPW(password)
-
-		# load the el cryptomajoig (replace with the name of the library on your system)
-		self.cryptoshit = CDLL("libcryptoshit.dylib")
+		self.password = self.hashPW(password)
 
 	def encrypt(self):
-		pass
+		cipher = AES.new(self.password, AES.MODE_CBC, 'This is an IV456')
+		encoded = str(base64.b64encode(cipher.encrypt(self.string)))
+
+		return encoded
 
 	def decrypt(self):
-		pass
+		cipher = AES.new(self.password, AES.MODE_CBC, 'This is an IV456')
+		decoded = cipher.decrypt(base64.b64decode(self.string))
+
+		return decoded.strip
+
+	def hashPW(pw):
+		return hash(pw)
