@@ -2,6 +2,7 @@ from ctypes import *
 from Crypto import Random
 from Crypto.Cipher import AES
 import base64
+import hashlib
 
 class LameCrypto():
 	def __init__(self, string, password):
@@ -21,4 +22,4 @@ class LameCrypto():
 		return decoded.strip
 
 	def hashPW(pw):
-		return hash(pw)
+		return hashlib.sha256(pw).hexdigest()
