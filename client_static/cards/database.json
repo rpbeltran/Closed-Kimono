@@ -1,5 +1,6 @@
 {
   "name" : "root",
+  "type" : "folder",
   "security" : {
     "passwords" : 1,
     "timeout" : 900
@@ -7,15 +8,19 @@
   "data" : [
     {
       "name" : "folder dan",
+      "type" : "folder",
+
       "security" : { },
       "data" : [
         {
           "name" : "nest file a",
+          "type" : "file",
           "security" : { },
           "data" : "aaaaabbjkaaaaa"
         },
         {
           "name" : "nest file b",
+          "type" : "file",
           "security" : { },
           "data" : "bbbbbbsdfjksdhfbbbbbbbbjhjkhbbbbbbbb"
         }
@@ -24,41 +29,49 @@
     {
       "name" : "file a",
       "security" : { },
+      "type" : "file",
       "data" : "aaaaabbjkaaaaa"
     },
     {
       "name" : "file b",
       "security" : { },
+      "type" : "file",
       "data" : "bbbbbbsdfjksdhfbbbbbbbbjhjkhbbbbbbbb"
     },
     {
       "name" : "file c",
       "security" : { },
+      "type" : "file",
       "data" : "ccccxcccccjhjkhcccccccccc"
     },
     {
       "name" : "file d",
       "security" : { },
+      "type" : "file",
       "data" : "ddddjjhjkddddddjjddddd"
     },
     {
       "name" : "file a",
       "security" : { },
+      "type" : "file",
       "data" : "aaaaabbjkaaaaa"
     },
     {
       "name" : "file b",
       "security" : { },
+      "type" : "file",
       "data" : "bbbbbbsdfjksdhfbbbbbbbbjhjkhbbbbbbbb"
     },
     {
       "name" : "file c",
       "security" : { },
+      "type" : "file",
       "data" : "ccccxcccccjhjkhcccccccccc"
     },
     {
       "name" : "file d",
       "security" : { },
+      "type" : "file",
       "data" : "ddddjjhjkddddddjjddddd"
     }
   ]

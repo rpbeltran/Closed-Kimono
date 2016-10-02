@@ -23,6 +23,7 @@
   <div class="col s12 z-depth-6 card-panel" style = "padding-bottom:20px;">
 
     <div id = "form" class="login-form">
+
     </div>
 
   </div>
@@ -71,45 +72,45 @@
                      '     </div>' +
                      '</div>' );
 
-    $("#login").click(loginEmail);
+    $( "#login" ).click( loginEmail );
 
   }
 
 
   function loadPasswordStage( passwords ) {
 
-    var content = '<div class="row"></div>' +
-                  '<div class="row"></div>' +
-                  '<div style = "text-align:center" >'+
-                  '    <h3 style = >Closed Kimono</h3>' +
-                  '    Because aint nobody want to see that' +
-                  '</div>' +
-                  '<div class="row"></div> ';
+        var content = '<div class="row"></div>' +
+                      '<div class="row"></div>' +
+                      '<div style = "text-align:center" >'+
+                      '    <h3 style = >Closed Kimono</h3>' +
+                      '    Because aint nobody want to see that' +
+                      '</div>' +
+                      '<div class="row"></div> ';
 
-    for ( var i = 0; i < passwords; i++ ) {
+        for ( var i = 0; i < passwords; i++ ) {
 
-      i = (i==0) ? "" : (i+1).toString();
+              i = (i==0) ? "" : (i+1).toString();
 
-      content += '<div class="row">' +
-                 '   <div class="input-field col s12">' +
-                 '      <i class="material-icons prefix">lock_outline</i>' +
-                 '      <input id="password'+i+'" type="password">' +
-                 '      <label for="password'+i+'"> Password '+i+' </label>' +
-                 '   </div>' +
-                 '</div>'
-    }
+              content += '<div class="row">' +
+                         '   <div class="input-field col s12">' +
+                         '      <i class="material-icons prefix">lock_outline</i>' +
+                         '      <input id="password'+i+'" type="password">' +
+                         '      <label for="password'+i+'"> Password '+i+' </label>' +
+                         '   </div>' +
+                         '</div>'
+        }
 
-    content += '<div class="row">' +
-               '  <div class="input-field col s12">' +
-               '    <a href="#" , id="authenticate" , class="btn waves-effect waves-light col s12">Authenticate</a>' +
-               '  </div>'
-               '</div>';
+        content += '<div class="row">' +
+                   '  <div class="input-field col s12">' +
+                   '    <a href="#" , id="authenticate" , class="btn waves-effect waves-light col s12">Authenticate</a>' +
+                   '  </div>'
+                   '</div>';
 
-    $("#form").html ( content );
+        $("#form").html ( content );
 
-    $("#authenticate").on('click', function( ) {
-      alert("Authenticated");
-    } );
+        $("#authenticate").on('click', function( ) {
+          alert("Authenticated");
+        } );
 
   }
 

@@ -70,10 +70,21 @@
     function drawCardsFromJSON( source, path ) {
 
         loadJSON( source, function( response ) {
+
+
             var data = JSON.parse( response );
+
             drawCards( data, path );
+
+            $(".dataCard activator").click( function() {
+                $(this).attr("data")
+            })
+
+
         });
     }
+
+    function openF
 
 </script>
 
