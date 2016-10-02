@@ -14,22 +14,38 @@ uri = "mongodb://"+conf['db_user']+":"+conf['db_pass']+"@"+conf['db_host']
 client = MongoClient(uri)
 db = client.get_default_database()[conf['db_name']]
 
-# class LameCrypto(): #ToDo: this only works if the sting is 16x chars
-#     def __init__(self, string, password):
-#         self.string = string
-#         self.password = hashPW(password)
-#
-#     def encrypt(self):
-#         cipher = AES.new(self.password, AES.MODE_ECB) #Todo: ECB is apparently awful
-#         encoded = str(base64.b64encode(cipher.encrypt(self.string)))
-#
-#         return encoded
-#
-#     def decrypt(self):
-#         cipher = AES.new(self.password, AES.MODE_ECB)
-#         decoded = cipher.decrypt(base64.b64decode(self.string))
-#
-#         return decoded.strip
+
+
+class LameCrypto():
+    def __init__(self, string, password):
+        self.string = string
+        self.password = password
+
+        self.padPwd()
+        self.padStr()
+
+    def padStr(self):
+        n = 16-(len(self.string) % 16)
+        self.string = self.string + " "*n
+
+    def padPwd(self):
+        n = 32 - len(self.password)
+
+        self.password = self.password + " "*n
+
+
+    def encrypt(self):
+        cipher = AES.new(self.password, AES.MODE_CBC, 'This is an IV456')
+        encoded = str(base64.b64encode(cipher.encrypt(self.string)))
+
+        return encoded
+
+    def decrypt(self):
+        cipher = AES.new(self.password, AES.MODE_CBC, 'This is an IV456')
+        decoded = cipher.decrypt(base64.b64decode(self.string))
+
+        return decoded.strip()
+
 
 
 class Security():
@@ -61,7 +77,14 @@ class Security():
 
         return True
 
+def checkLogin(key):
+    if(key == None):
+        return False
+    res = db.users.find_one({"sessions":{"$elemMatch":key}})
+    if(res == None):
+        return False
 
+    return res
 
 
 def hashPW(pw):
@@ -149,7 +172,36 @@ class APIHandler(web.RequestHandler):
             return
 
         elif(e == "createnote"):
+
+
+            key  = self.get_argument("key", None)
+
+            uinfo = checkLogin(key)
+
+            if uinfo == False:
+                self.write(json.dumps({"error":"not logged in"}))
+                return
+
+
+            title  = self.get_argument("title", None)
+            sec = json.loads(self.get_argument("sec", None))
+            sid = uuid1()
+
+            sec['sid'] = sid
+            body = []
+
+            uinfo['notes'].append({
+                "title":title,
+                "sec":sec,
+                "sid":sid,
+                "body":body
+            })
+
+            db.sec.insert(sec)
+
+        elif(e=="syncfile"):
             pass
+
 
 
 

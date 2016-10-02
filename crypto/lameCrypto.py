@@ -7,7 +7,20 @@ import hashlib
 class LameCrypto():
 	def __init__(self, string, password):
 		self.string = string
-		self.password = self.hashPW(password)
+		self.password = password
+
+		self.padPwd()
+		self.padStr()
+
+	def padStr(self):
+		n = 16-(len(self.string) % 16)
+		self.string = self.string + " "*n
+
+	def padPwd(self):
+		n = 32 - len(self.password)
+
+		self.password = self.password + " "*n
+
 
 	def encrypt(self):
 		cipher = AES.new(self.password, AES.MODE_CBC, 'This is an IV456')
@@ -19,7 +32,13 @@ class LameCrypto():
 		cipher = AES.new(self.password, AES.MODE_CBC, 'This is an IV456')
 		decoded = cipher.decrypt(base64.b64decode(self.string))
 
-		return decoded.strip
+		return decoded.strip()
 
 	def hashPW(pw):
 		return hashlib.sha256(pw).hexdigest()
+
+
+#l = LameCrypto("hello world", "akjojds")
+l = LameCrypto("OkqbpUZ0ySnZZERGvwDJOg==", "akjojds")
+
+print(l.decrypt())
