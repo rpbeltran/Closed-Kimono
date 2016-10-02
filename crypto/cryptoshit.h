@@ -14,6 +14,11 @@
 void cryptoshit_init();
 
 /**
+ * derive a key from the password
+ */
+void cryptoshit_secrete_key(char *password, void *keyOut, size_t keyOutSz);
+
+/**
  * does magical things to the shit in the input buffer of the given size and
  * secretes it into the output buffer of the same size. also if something bad
  * happens it crashes lol
@@ -24,8 +29,9 @@ void cryptoshit_init();
 void cryptoshit_encrypt(void *key, void *in, size_t inSz, void *out, size_t outSz);
 
 /**
- * this does literally the exact same as the above one but in reverse lol
+ * this does literally the exact same as the above one but in reverse lol. it
+ * returns the amount of cubes
  */
-void cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size_t outSz, size_t *actualDecryptedBytes);
+size_t cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size_t outSz);
 
 #endif

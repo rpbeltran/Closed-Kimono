@@ -129,6 +129,23 @@ EXPORT void cryptoshit_init() {
 }
 
 /**
+ * derive a key from the password
+ */
+EXPORT void cryptoshit_secrete_key(char *password, void *keyOut, size_t keyOutSz) {
+	int status = -1;
+
+	const char *salt = "fuck the patriarchy";
+
+	// do the things
+	status = PKCS5_PBKDF2_HMAC_SHA1(password, -1, (unsigned char *) salt, strlen(salt), 5000, keyOutSz, keyOut);
+
+	// test???
+	if(status != 1) {
+		secreteLibSSLError();
+	}
+}
+
+/**
  * does magical things to the shit in the input buffer of the given size and
  * secretes it into the output buffer of the same size. also if something bad
  * happens it crashes lol
@@ -164,9 +181,10 @@ EXPORT void cryptoshit_encrypt(void *key, void *in, size_t inSz, void *out, size
 }
 
 /**
- * this does literally the exact same as the above one but in reverse lol
+ * this does literally the exact same as the above one but in reverse lol. it
+ * returns the amount of cubes
  */
-EXPORT void cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size_t outSz, size_t *actualDecryptedBytes) {
+EXPORT size_t cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size_t outSz) {
 	// check the shit
 	if(outSz > inSz) {
 		printf("no the output buffer is larger !!!\n");
@@ -181,8 +199,9 @@ EXPORT void cryptoshit_decrypt(void *key, void *in, size_t inSz, void *out, size
 
 	// get how many bytes we actually need to decrypt
 	size_t bytesOfCryptoText = *cryptoSzPtr;
-	*actualDecryptedBytes = *plainSzPtr;
 
 	// do a decryptification
 	decrypt(cryptoText, bytesOfCryptoText, key, iv, out);
+
+	return *plainSzPtr;
 }
